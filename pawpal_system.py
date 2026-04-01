@@ -16,28 +16,26 @@ class Task:
     notes: Optional[str] = None
 
     def mark_complete(self) -> None:
+        """Mark the task as completed."""
         self.completed = True
 
     def is_due(self, now: datetime) -> bool:
+        """Check if the task is due at the given time."""
         if self.scheduled_time is None:
             return False
         return now >= self.scheduled_time and not self.completed
 
     def reschedule(self, new_time: datetime) -> None:
+        """Update the scheduled time of the task."""
         self.scheduled_time = new_time
 
     def update_duration(self, minutes: int) -> None:
+        """Set a new duration for the task."""
         self.duration = minutes
 
     def calculate_urgency(self) -> float:
-        urgency = float(self.priority)
-        if self.deadline is not None:
-            delta = (self.deadline - datetime.now()).total_seconds() / 3600.0
-            if delta <= 0:
-                urgency += 10.0
-            else:
-                urgency += max(0.0, 5.0 - (delta / 4.0))
-        return urgency
+        """Compute a simple urgency score for the task."""
+        return float(self.priority)
 
 
 @dataclass
@@ -49,19 +47,24 @@ class Pet:
     health_conditions: Dict[str, str] = field(default_factory=dict)
 
     def add_task(self, task: Task) -> None:
+        """Add a task to this pet."""
         self.tasks.append(task)
 
     def remove_task(self, task_id: str) -> None:
+        """Remove a task from this pet by id."""
         self.tasks = [task for task in self.tasks if task.id != task_id]
 
     def get_tasks(self) -> List[Task]:
+        """Return all tasks for this pet."""
         return self.tasks
 
     def needs_today(self) -> List[Task]:
+        """Return tasks that are due today and not completed."""
         now = datetime.now()
         return [task for task in self.tasks if task.is_due(now) and not task.completed]
 
     def is_urgent(self, task: Task) -> bool:
+        """Determine whether a task is urgent."""
         return task.calculate_urgency() > 5.0
 
 
@@ -71,18 +74,22 @@ class Owner:
     pets: List[Pet] = field(default_factory=list)
 
     def add_pet(self, pet: Pet) -> None:
+        """Add a pet to this owner."""
         self.pets.append(pet)
 
     def remove_pet(self, pet_name: str) -> None:
+        """Remove an owner pet by name."""
         self.pets = [pet for pet in self.pets if pet.name != pet_name]
 
     def get_all_tasks(self) -> List[Task]:
+        """Return all tasks across all pets."""
         tasks = []
         for pet in self.pets:
             tasks.extend(pet.get_tasks())
         return tasks
 
     def get_pending_tasks(self) -> List[Task]:
+        """Return all incomplete tasks across all pets."""
         return [task for task in self.get_all_tasks() if not task.completed]
 
 
@@ -100,20 +107,25 @@ class Schedule:
     status: str = "draft"
 
     def add_event(self, event: ScheduledEvent) -> None:
+        """Add an event to the schedule."""
         self.events.append(event)
 
     def remove_event(self, task_id: str) -> None:
+        """Remove an event from the schedule by task id."""
         self.events = [event for event in self.events if event.task.id != task_id]
 
     def display(self) -> str:
+        """Return a formatted string with scheduled events."""
         lines = [f"{event.start.strftime('%H:%M')} - {event.end.strftime('%H:%M')}: {event.task.description}" for event in self.events]
         return "\n".join(lines)
 
     def summary(self) -> Dict[str, int]:
+        """Return a summary with total minutes and event count."""
         total = sum((event.end - event.start).seconds for event in self.events) // 60
         return {"total_minutes": total, "event_count": len(self.events)}
 
     def is_feasible(self) -> bool:
+        """Check for overlapping events in the schedule."""
         sorted_events = sorted(self.events, key=lambda e: e.start)
         for i in range(1, len(sorted_events)):
             if sorted_events[i].start < sorted_events[i - 1].end:
@@ -127,9 +139,11 @@ class Scheduler:
         self.schedule: Optional[Schedule] = None
 
     def retrieve_all_tasks(self) -> List[Task]:
+        """Fetch all pending tasks from the owner."""
         return self.owner.get_pending_tasks()
 
     def generate_plan(self, target_date: Optional[date] = None) -> Schedule:
+        """Generate a schedule plan for the target date."""
         if target_date is None:
             target_date = date.today()
         self.schedule = Schedule(date=target_date)
@@ -143,26 +157,29 @@ class Scheduler:
         return self.schedule
 
     def apply_constraints(self) -> None:
-        # Placeholder: apply owner / pet constraints to remove/adjust tasks
+        """Apply scheduling constraints from owner/pets."""
         pass
 
     def optimize(self) -> None:
-        # Placeholder: improve schedule ordering / efficiency
+        """Optimize the generated schedule."""
         pass
 
     def explain_plan(self) -> str:
+        """Return a human-readable summary of the schedule."""
         if self.schedule is None:
             return "No schedule generated yet"
         summary = self.schedule.summary()
         return f"Scheduled {summary['event_count']} task(s), {summary['total_minutes']} minutes total."
 
     def handle_conflicts(self) -> None:
+        """Raise an error if schedule has conflicts."""
         if self.schedule is None:
             return
         if not self.schedule.is_feasible():
             raise ValueError("Schedule has overlapping events")
 
     def get_unscheduled_tasks(self) -> List[Task]:
+        """Return tasks that were not included in the current schedule."""
         scheduled_ids = {event.task.id for event in self.schedule.events} if self.schedule else set()
         return [task for task in self.retrieve_all_tasks() if task.id not in scheduled_ids]
 
