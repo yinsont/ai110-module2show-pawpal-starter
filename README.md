@@ -22,6 +22,18 @@ Your final app should:
 - Display the plan clearly (and ideally explain the reasoning)
 - Include tests for the most important scheduling behaviors
 
+## Implemented Features
+
+Beyond the basics, this implementation includes "smart" features for enhanced usability:
+
+- **Recurring Tasks**: Daily/weekly tasks automatically create next occurrences when marked complete.
+- **Conflict Detection**: Identifies overlapping tasks (overall or for the same pet) and warns without crashing.
+- **Task Filtering**: Filter tasks by completion status or pet name.
+- **Flexible Scheduling**: Respects fixed task times if set, otherwise schedules sequentially.
+- **Sorting & Prioritization**: Tasks sorted by time and priority for optimal planning.
+- **Multi-Pet Support**: Owner can manage multiple pets with separate task lists.
+- **Streamlit UI Integration**: Interactive app for adding pets/tasks and generating schedules.
+
 ## Getting started
 
 ### Setup

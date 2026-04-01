@@ -24,13 +24,15 @@ Task: Duration, Priority, Pull/Add Tasks
 **a. Constraints and priorities**
 
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
+Time availability to maximize efficiency, urgency to alter priority
 - How did you decide which constraints mattered most?
-
+Time availability; logically, without time, you can't get anything done
 **b. Tradeoffs**
 
 - Describe one tradeoff your scheduler makes.
+overlapping times/tasks
 - Why is that tradeoff reasonable for this scenario?
-
+It's possible to do 2 jobs at once such as walking 2 dogs together rather than each seperately.
 ---
 
 ## 3. AI Collaboration
