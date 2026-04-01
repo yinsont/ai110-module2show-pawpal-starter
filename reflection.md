@@ -7,7 +7,8 @@
 - Briefly describe your initial UML design.
 Upon initial readings, it seems that we need an owner that can contain multiple pets, and those pets have multilpe tasks that need to be completed.
 - What classes did you include, and what responsibilities did you assign to each?
-Pet, Task
+Pet, Task, Scheduler, and owner
+
 Pet: Name, Age, Owner_Name, Add Pet, Tasks
 Task: Duration, Priority, Pull/Add Tasks
 
