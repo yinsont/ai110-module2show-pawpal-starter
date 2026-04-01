@@ -319,6 +319,32 @@ class Scheduler:
         return None
 
     def detect_conflicts(self) -> Dict[str, List[str]]:
+        """Detect scheduling conflicts: same-pet overlaps only (allows parallel tasks for different pets)."""
+        if not self.schedule:
+            return {}
+
+        conflicts = {}
+
+        # Same-pet conflicts only (different pets can do tasks in parallel)
+        events_by_pet = {}
+        for event in self.schedule.events:
+            pet = self.get_pet_for_task(event.task)
+            if pet:
+                if pet not in events_by_pet:
+                    events_by_pet[pet] = []
+                events_by_pet[pet].append(event)
+
+        for pet, events in events_by_pet.items():
+            sorted_events = sorted(events, key=lambda e: e.start)
+            for i in range(1, len(sorted_events)):
+                if sorted_events[i].start < sorted_events[i - 1].end:
+                    if "same_pet" not in conflicts:
+                        conflicts["same_pet"] = []
+                    conflicts["same_pet"].append(f"{pet.name} has overlapping tasks: {sorted_events[i-1].task.description} and {sorted_events[i].task.description}")
+
+        return conflicts
+
+    def detect_conflicts(self) -> Dict[str, List[str]]:
         """Detect scheduling conflicts: overall overlaps and same-pet overlaps.
 
         Returns:
