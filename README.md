@@ -53,3 +53,8 @@ pip install -r requirements.txt
 5. Add tests to verify key behaviors.
 6. Connect your logic to the Streamlit UI in `app.py`.
 7. Refine UML so it matches what you actually built.
+
+
+## Testing PawPal+
+python3 -m pytest tests/test_pawpal.py
+confidence level: 2, getting 2 failed tests due to overlapping events. In my mind, some events such as walking/playing/feeding can be done w/ multiple pets at a time to conserver time
