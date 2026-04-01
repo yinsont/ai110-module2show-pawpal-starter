@@ -1,0 +1,72 @@
+%% PawPal+ class diagram
+classDiagram
+    class User {
+        +String name
+        +List availability
+        +Dict preferences
+        +Dict constraints
+        +is_available(timeWindow) bool
+        +update_availability(availability)
+        +set_preferences(pref)
+        +get_time_budget() int
+    }
+
+    class Pet {
+        +String name
+        +String species
+        +int age
+        +Dict health_conditions
+        +Dict activity_needs
+        +String behavior_profile
+        +needs_today() List
+        +update_health_status(status)
+        +is_urgent(taskType) bool
+    }
+
+    class Task {
+        +String id
+        +String type
+        +int duration
+        +int priority
+        +DateTime deadline
+        +DateTime earliest
+        +DateTime latest
+        +String repeat
+        +String notes
+        +is_due(now) bool
+        +reschedule(newStart)
+        +update_duration(minutes)
+        +calculate_urgency() float
+    }
+
+    class Scheduler {
+        +List~Task~ task_list
+        +User owner
+        +Pet pet
+        +Schedule scheduled_plan
+        +generate_plan()
+        +apply_constraints()
+        +optimize()
+        +explain_plan() String
+        +handle_conflicts()
+        +get_unscheduled_tasks() List
+    }
+
+    class Schedule {
+        +Date date
+        +List events
+        +int total_duration
+        +String status
+        +add_event(task, start, end)
+        +remove_event(taskId)
+        +display()
+        +summary()
+        +is_feasible() bool
+    }
+
+    User "1" -- "0..*" Task : owns
+    Pet "1" -- "0..*" Task : needs
+    Scheduler "1" -- "1" User : uses
+    Scheduler "1" -- "1" Pet : uses
+    Scheduler "1" -- "1" Schedule : builds
+    Schedule "1" -- "0..*" Task : contains
